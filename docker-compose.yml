@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: bill-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: bill_root
+      MYSQL_DATABASE: bill
+      MYSQL_USER: bill
+      MYSQL_PASSWORD: bill_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - bill_mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  bill_mysql_data:

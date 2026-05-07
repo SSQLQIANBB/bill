@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Bill",
+    "slug": "bill",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bill.app"
+    },
+    "android": {
+      "package": "com.bill.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#fafbf7"
+      }
+    },
+    "extra": {
+      "apiBaseUrl": "http://127.0.0.1:8000"
+    }
+  }
+}
