@@ -1,4 +1,6 @@
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+import { env } from "../config/env";
+
+export const API_BASE_URL = env.apiBaseUrl;
 
 type RequestOptions = RequestInit & {
   token?: string | null;

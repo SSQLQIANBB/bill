@@ -1,4 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
+import { env } from "../config/env";
 import { request } from "./api";
 
 export type User = {
@@ -29,40 +30,40 @@ export function useAuth() {
 export type AuthResult = { accessToken: string; tokenType: string; user: User };
 
 export async function sendSmsCode(phone: string) {
-  return request<{ message: string }>("/api/v1/auth/sms/send", {
+  return request<{ message: string }>(`${env.authBasePath}/sms/send`, {
     method: "POST",
     body: JSON.stringify({ phone })
   });
 }
 
 export async function loginWithSms(phone: string, code: string) {
-  return request<AuthResult>("/api/v1/auth/sms/login", {
+  return request<AuthResult>(`${env.authBasePath}/sms/login`, {
     method: "POST",
     body: JSON.stringify({ phone, code })
   });
 }
 
 export async function loginWithPassword(account: string, password: string) {
-  return request<AuthResult>("/api/v1/auth/login", {
+  return request<AuthResult>(`${env.authBasePath}/login`, {
     method: "POST",
     body: JSON.stringify({ account, password })
   });
 }
 
 export async function registerWithPhone(phone: string, code: string, password: string) {
-  return request<AuthResult>("/api/v1/auth/register", {
+  return request<AuthResult>(`${env.authBasePath}/register`, {
     method: "POST",
     body: JSON.stringify({ phone, code, password })
   });
 }
 
 export async function loginWithWechat(code: string) {
-  return request<AuthResult>("/api/v1/auth/wechat", {
+  return request<AuthResult>(`${env.authBasePath}/wechat`, {
     method: "POST",
     body: JSON.stringify({ code })
   });
 }
 
 export async function getMe(token: string) {
-  return request<User>("/api/v1/auth/me", { token });
+  return request<User>(`${env.authBasePath}/me`, { token });
 }
