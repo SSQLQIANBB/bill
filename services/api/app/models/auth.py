@@ -15,6 +15,8 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     phone: Mapped[str | None] = mapped_column(String(32), unique=True, index=True, nullable=True)
+    email: Mapped[str | None] = mapped_column(String(255), unique=True, index=True, nullable=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     wechat_openid: Mapped[str | None] = mapped_column(String(128), unique=True, index=True, nullable=True)
     nickname: Mapped[str | None] = mapped_column(String(64), nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(String(512), nullable=True)

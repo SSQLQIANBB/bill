@@ -1,5 +1,6 @@
 from collections.abc import AsyncGenerator
 
+from sqlalchemy import inspect, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -24,3 +25,9 @@ async def create_db_and_tables() -> None:
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        user_columns = await conn.run_sync(lambda sync_conn: {c["name"] for c in inspect(sync_conn).get_columns("users")})
+        if "email" not in user_columns:
+            await conn.execute(text("ALTER TABLE users ADD COLUMN email VARCHAR(255) NULL"))
+            await conn.execute(text("CREATE UNIQUE INDEX ix_users_email ON users (email)"))
+        if "password_hash" not in user_columns:
+            await conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NULL"))

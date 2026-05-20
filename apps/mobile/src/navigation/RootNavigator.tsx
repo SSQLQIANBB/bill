@@ -1,10 +1,12 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "../screens/LoginScreen";
+import { RegisterScreen } from "../screens/RegisterScreen";
 import { MainTabs } from "./tabs";
 import { useAuth } from "../services/auth";
 
 export type RootStackParamList = {
   Login: undefined;
+  Register: undefined;
   Main: undefined;
 };
 
@@ -18,7 +20,10 @@ export function RootNavigator() {
       {auth.token ? (
         <Stack.Screen name="Main" component={MainTabs} />
       ) : (
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Group>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </Stack.Group>
       )}
     </Stack.Navigator>
   );
