@@ -32,35 +32,35 @@ export type AuthResult = { accessToken: string; tokenType: string; user: User };
 export async function sendSmsCode(phone: string) {
   return request<{ message: string }>(`${env.authBasePath}/sms/send`, {
     method: "POST",
-    body: JSON.stringify({ phone })
+    data: { phone }
   });
 }
 
 export async function loginWithSms(phone: string, code: string) {
   return request<AuthResult>(`${env.authBasePath}/sms/login`, {
     method: "POST",
-    body: JSON.stringify({ phone, code })
+    data: { phone, code }
   });
 }
 
 export async function loginWithPassword(account: string, password: string) {
   return request<AuthResult>(`${env.authBasePath}/login`, {
     method: "POST",
-    body: JSON.stringify({ account, password })
+    data: { account, password }
   });
 }
 
 export async function registerWithPhone(phone: string, code: string, password: string) {
   return request<AuthResult>(`${env.authBasePath}/register`, {
     method: "POST",
-    body: JSON.stringify({ phone, code, password })
+    data: { phone, code, password }
   });
 }
 
 export async function loginWithWechat(code: string) {
   return request<AuthResult>(`${env.authBasePath}/wechat`, {
     method: "POST",
-    body: JSON.stringify({ code })
+    data: { code }
   });
 }
 
