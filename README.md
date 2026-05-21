@@ -1,12 +1,19 @@
 # Bill
 
-智能记账 App 项目骨架，前端使用 React Native/Expo，服务端使用 FastAPI，数据库使用 MySQL。
+智能记账 App 项目骨架，前端使用 React Native/Expo + Expo Router，服务端使用 FastAPI，数据库使用 MySQL，Redis 用于 refreshToken 状态。
 
 ## 目录
 
-- `apps/mobile`: React Native App，支持 Android/iOS/Web。
+- `apps/mobile`: React Native App，支持 Android/iOS/Web，使用 `app/` Expo Router 路由目录。
 - `services/api`: FastAPI 服务，提供微信授权登录、手机号验证码登录、注册、密码登录等接口。
-- `docker-compose.yml`: 本地 MySQL。
+- `docker-compose.yml`: 本地 MySQL 与 Redis。
+
+## 前端架构
+
+- 路由：Expo Router。
+- 全局状态：Zustand，`src/store/authStore.ts` 保存内存 accessToken，`src/store/userStore.ts` 保存用户信息，`src/store/billStore.ts` 保存当前账单演示数据。
+- token 存储：`src/storage/tokenStorage.ts` 使用 `expo-secure-store` 保存 refreshToken；accessToken 不持久化。
+- 登录注册：`POST /api/v1/auth/login`、`POST /api/v1/auth/register`、`POST /api/v1/auth/refresh`、`GET /api/v1/auth/me`。
 
 ## 环境变量
 
@@ -31,7 +38,7 @@ $env:APP_ENV="uat"
 
 ```powershell
 cd D:\Bill
-docker compose --env-file services/api/.env.development up -d mysql
+docker compose --env-file services/api/.env.development up -d mysql redis
 ```
 
 ### 2. 服务端
