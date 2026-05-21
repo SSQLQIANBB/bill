@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from urllib.parse import quote_plus
 
+from pydantic import AliasChoices, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,13 +28,26 @@ class Settings(BaseSettings):
     mysql_user: str = "bill"
     mysql_password: str = "bill_password"
     mysql_root_password: str = "bill_root"
-    jwt_secret: str = "change-me-in-production"
-    jwt_expire_minutes: int = 60 * 24 * 30
+    jwt_secret_key: str = Field(
+        default="change-me-in-development",
+        validation_alias=AliasChoices("JWT_SECRET_KEY", "JWT_SECRET"),
+    )
+    jwt_algorithm: str = "HS256"
+    access_token_expire_days: int = 7
+    refresh_token_expire_days: int = 30
+    redis_url: str = "redis://localhost:6379/0"
     wechat_app_id: str = ""
     wechat_app_secret: str = ""
     sms_dev_code: str = "123456"
 
     model_config = SettingsConfigDict(env_file=ENV_FILE, env_file_encoding="utf-8")
+
+    @model_validator(mode="after")
+    def validate_secure_defaults(self) -> "Settings":
+        weak_values = {"", "change-me", "change-me-in-production", "change-me-in-development"}
+        if self.app_env == "production" and self.jwt_secret_key in weak_values:
+            raise ValueError("JWT_SECRET_KEY must be configured with a strong secret in production")
+        return self
 
     @property
     def sqlalchemy_database_url(self) -> str:

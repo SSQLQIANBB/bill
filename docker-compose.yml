@@ -13,5 +13,14 @@ services:
       - bill_mysql_data:/var/lib/mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  redis:
+    image: redis:7-alpine
+    container_name: bill-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - bill_redis_data:/data
+
 volumes:
   bill_mysql_data:
+  bill_redis_data:

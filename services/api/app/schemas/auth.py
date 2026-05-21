@@ -1,4 +1,14 @@
+from typing import Generic, TypeVar
+
 from pydantic import BaseModel, Field
+
+T = TypeVar("T")
+
+
+class ApiResponse(BaseModel, Generic[T]):
+    code: str
+    message: str
+    data: T | None = None
 
 
 class SmsSendRequest(BaseModel):
@@ -11,8 +21,8 @@ class SmsLoginRequest(BaseModel):
 
 
 class PasswordLoginRequest(BaseModel):
-    account: str = Field(min_length=6, max_length=255)
-    password: str = Field(min_length=8, max_length=128)
+    account: str = Field(default="", max_length=255)
+    password: str = Field(default="", max_length=128)
 
 
 class RegisterRequest(BaseModel):
@@ -36,5 +46,14 @@ class UserOut(BaseModel):
 
 class TokenOut(BaseModel):
     accessToken: str
-    tokenType: str = "bearer"
-    user: UserOut
+    refreshToken: str
+    tokenType: str = "Bearer"
+    expiresIn: int
+
+
+class RefreshRequest(BaseModel):
+    refreshToken: str = Field(default="", max_length=512)
+
+
+class LogoutRequest(BaseModel):
+    refreshToken: str = Field(default="", max_length=512)
