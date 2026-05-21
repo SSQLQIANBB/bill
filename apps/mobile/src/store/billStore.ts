@@ -1,4 +1,4 @@
-import { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useMemo, useState } from "react";
+import { create } from "zustand";
 
 export type TransactionKind = "income" | "expense";
 
@@ -37,52 +37,54 @@ const initialIntegrations: Integration[] = [
   { id: "alipay", name: "支付宝", status: "待接入", syncedToday: 0, enabled: false }
 ];
 
-type FinanceContextValue = {
+type Updater<T> = T[] | ((current: T[]) => T[]);
+
+type BillStore = {
   transactions: Transaction[];
-  setTransactions: Dispatch<SetStateAction<Transaction[]>>;
   integrations: Integration[];
-  setIntegrations: Dispatch<SetStateAction<Integration[]>>;
+  setTransactions: (next: Updater<Transaction>) => void;
+  setIntegrations: (next: Updater<Integration>) => void;
   addTransaction: (input: Omit<Transaction, "id" | "occurredAt" | "status"> & { status?: Transaction["status"] }) => void;
+  updateTransaction: (id: string, updates: Partial<Transaction>) => void;
+  deleteTransaction: (id: string) => void;
+  clearTransactions: () => void;
 };
 
-const FinanceContext = createContext<FinanceContextValue | null>(null);
-
-export function FinanceProvider({ children }: PropsWithChildren) {
-  const [transactions, setTransactions] = useState(initialTransactions);
-  const [integrations, setIntegrations] = useState(initialIntegrations);
-
-  const value = useMemo<FinanceContextValue>(
-    () => ({
-      transactions,
-      setTransactions,
-      integrations,
-      setIntegrations,
-      addTransaction(input) {
-        const now = new Date();
-        setTransactions((current) => [
-          {
-            id: String(now.getTime()),
-            occurredAt: "刚刚",
-            status: input.status ?? "已分类",
-            ...input
-          },
-          ...current
-        ]);
-      }
-    }),
-    [integrations, transactions]
-  );
-
-  return <FinanceContext.Provider value={value}>{children}</FinanceContext.Provider>;
-}
-
-export function useFinance() {
-  const value = useContext(FinanceContext);
-  if (!value) {
-    throw new Error("useFinance must be used inside FinanceProvider");
-  }
-  return value;
-}
+export const useBillStore = create<BillStore>((set) => ({
+  transactions: initialTransactions,
+  integrations: initialIntegrations,
+  setTransactions: (next) =>
+    set((state) => ({
+      transactions: typeof next === "function" ? next(state.transactions) : next
+    })),
+  setIntegrations: (next) =>
+    set((state) => ({
+      integrations: typeof next === "function" ? next(state.integrations) : next
+    })),
+  addTransaction(input) {
+    const now = new Date();
+    set((state) => ({
+      transactions: [
+        {
+          id: String(now.getTime()),
+          occurredAt: "刚刚",
+          status: input.status ?? "已分类",
+          ...input
+        },
+        ...state.transactions
+      ]
+    }));
+  },
+  updateTransaction: (id, updates) =>
+    set((state) => ({
+      transactions: state.transactions.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    })),
+  deleteTransaction: (id) =>
+    set((state) => ({
+      transactions: state.transactions.filter((item) => item.id !== id)
+    })),
+  clearTransactions: () => set({ transactions: [] })
+}));
 
 export function formatMoney(value: number) {
   return `¥${value.toLocaleString("zh-CN", { minimumFractionDigits: value % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 })}`;

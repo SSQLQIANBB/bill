@@ -1,13 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { AppText } from "../components/Text";
-import { formatMoney, useFinance } from "../services/finance";
+import { formatMoney, useBillStore } from "../store/billStore";
 import { colors } from "../theme/colors";
 
 const palette = [colors.brand, colors.alipay, colors.wechat, colors.gold, colors.danger];
 
 export function StatsScreen() {
-  const { transactions } = useFinance();
+  const transactions = useBillStore((state) => state.transactions);
   const expense = transactions.filter((item) => item.kind === "expense").reduce((sum, item) => sum + item.amount, 0);
   const income = transactions.filter((item) => item.kind === "income").reduce((sum, item) => sum + item.amount, 0);
   const byCategory = transactions

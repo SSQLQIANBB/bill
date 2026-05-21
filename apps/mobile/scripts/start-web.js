@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const appRoot = path.resolve(__dirname, "..");
+
 const appEnv = process.env.APP_ENV || "development";
 const envPath = path.join(appRoot, `.env.${appEnv}`);
 
@@ -41,6 +42,7 @@ const executable = process.platform === "win32" ? "npx.cmd" : "npx";
 const child = spawn(executable, ["expo", "start", "--web", "--host", host, "--port", port], {
   cwd: appRoot,
   env: mergedEnv,
+  shell: process.platform === "win32",
   stdio: "inherit"
 });
 

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { AppText } from "../components/Text";
 import { TransactionRow } from "../components/TransactionRow";
-import { markerFor, signedAmount, Transaction, useFinance } from "../services/finance";
+import { markerFor, signedAmount, Transaction, useBillStore } from "../store/billStore";
 import { colors } from "../theme/colors";
 
 const filters = ["全部", "待处理", "微信支付", "支付宝", "银行卡"];
@@ -16,7 +16,8 @@ function channelColor(channel: Transaction["channel"]) {
 }
 
 export function TransactionsScreen() {
-  const { transactions, setTransactions } = useFinance();
+  const transactions = useBillStore((state) => state.transactions);
+  const setTransactions = useBillStore((state) => state.setTransactions);
   const [activeFilter, setActiveFilter] = useState("全部");
 
   const items = useMemo(() => {

@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "../components/Screen";
 import { AppText } from "../components/Text";
-import { useFinance } from "../services/finance";
+import { useBillStore } from "../store/billStore";
 import { colors } from "../theme/colors";
 
 const iconMap = {
@@ -18,7 +18,8 @@ function channelColor(name: string) {
 }
 
 export function IntegrationsScreen() {
-  const { integrations, setIntegrations } = useFinance();
+  const integrations = useBillStore((state) => state.integrations);
+  const setIntegrations = useBillStore((state) => state.setIntegrations);
 
   function toggle(id: string) {
     setIntegrations((current) =>
