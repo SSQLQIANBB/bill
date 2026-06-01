@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { colors } from "../theme/colors";
 import { AppText } from "./Text";
 
 type TabRoute = {
@@ -87,7 +88,7 @@ export function GlassTabBar({ state, descriptors, navigation }: GlassTabBarProps
               onLongPress={onLongPress}
               style={({ pressed }) => [styles.item, isFocused && styles.activeItem, pressed && styles.pressedItem]}
             >
-              <Ionicons name={meta.icon} size={22} color={isFocused ? "#006fe6" : "rgba(255,255,255,0.9)"} />
+              <Ionicons name={meta.icon} size={22} color={isFocused ? colors.brand : "rgba(255,255,255,0.9)"} />
               <AppText style={[styles.label, isFocused && styles.activeLabel]} numberOfLines={1}>
                 {meta.label}
               </AppText>
@@ -171,6 +172,6 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   activeLabel: {
-    color: "rgba(0,122,255,0.9)"
+    color: colors.brand
   }
 });

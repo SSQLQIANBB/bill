@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   actionText: {
-    color: "#9a5a1f",
+    color: colors.amberText,
     fontSize: 14,
     fontWeight: "700"
   }

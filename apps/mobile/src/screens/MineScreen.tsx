@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingTop: 54,
     paddingBottom: 26,
-    backgroundColor: "#ffe36b"
+    backgroundColor: colors.warmBg
   },
   profileRow: {
     flexDirection: "row",
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   account: {
     marginTop: 4,
-    color: "#766225",
+    color: colors.amberText,
     fontSize: 12
   },
   checkButton: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#ef4444"
+    backgroundColor: colors.danger
   },
   menuCard: {
     marginTop: 18,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   },
   menuDivider: {
     borderTopWidth: 1,
-    borderTopColor: "#f2f2f2"
+    borderTopColor: colors.line
   },
   menuIcon: {
     width: 34,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#fee2e2"
+    borderColor: "#fecaca"
   },
   logoutText: {
     color: colors.danger,

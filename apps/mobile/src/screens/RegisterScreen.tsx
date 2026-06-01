@@ -215,7 +215,7 @@ const webTextInputReset = Platform.select({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#f7f8f4"
+    backgroundColor: colors.background
   },
   container: {
     flex: 1
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff4e8"
+    backgroundColor: colors.warmBg
   },
   logoText: {
     color: colors.brand,
@@ -265,15 +265,15 @@ const styles = StyleSheet.create({
     gap: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#eee7dd",
+    borderColor: colors.line,
     backgroundColor: colors.white
   },
   input: {
     height: 54,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#eee7dd",
-    backgroundColor: "#f7f8f4",
+    borderColor: colors.line,
+    backgroundColor: colors.background,
     paddingHorizontal: 20,
     color: colors.text,
     fontSize: 14
@@ -287,8 +287,8 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#eee7dd",
-    backgroundColor: "#f7f8f4",
+    borderColor: colors.line,
+    backgroundColor: colors.background,
     paddingLeft: 20,
     paddingRight: 8,
     gap: 8
@@ -306,10 +306,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#ffd7ad",
+    borderColor: colors.warmLine,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff4e8"
+    backgroundColor: colors.warmBg
   },
   codeText: {
     color: colors.brand,
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   checkboxOff: {
     borderWidth: 1,
-    borderColor: "#eee7dd",
+    borderColor: colors.line,
     backgroundColor: colors.white
   },
   checkmark: {
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   linkText: {
-    color: "#9a5a1f",
+    color: colors.amberText,
     fontSize: 13
   },
   errorText: {
