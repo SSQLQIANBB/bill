@@ -1,10 +1,8 @@
-import { router } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { AppText } from "../components/Text";
 import { TransactionRow } from "../components/TransactionRow";
 import { formatMoney, markerFor, signedAmount, useBillStore } from "../store/billStore";
-import { useAuthStore } from "../store/authStore";
 import { colors } from "../theme/colors";
 
 function channelColor(channel: string) {
@@ -18,7 +16,6 @@ export function OverviewScreen() {
   const transactions = useBillStore((state) => state.transactions);
   const integrations = useBillStore((state) => state.integrations);
   const addTransaction = useBillStore((state) => state.addTransaction);
-  const logout = useAuthStore((state) => state.logout);
   const income = transactions.filter((item) => item.kind === "income").reduce((sum, item) => sum + item.amount, 0);
   const expense = transactions.filter((item) => item.kind === "expense").reduce((sum, item) => sum + item.amount, 0);
   const pendingCount = transactions.filter((item) => item.status !== "已分类").length;
@@ -29,15 +26,6 @@ export function OverviewScreen() {
     <Screen>
       <View style={styles.titleRow}>
         <AppText style={styles.title}>智能记账</AppText>
-        <Pressable
-          style={styles.logoutButton}
-          onPress={async () => {
-            await logout();
-            router.replace("/(auth)/login");
-          }}
-        >
-          <AppText style={styles.logoutText}>退出</AppText>
-        </Pressable>
       </View>
       <AppText style={styles.subtitle}>自动同步微信、支付宝、银行卡流水，快速完成分类与复核</AppText>
 
@@ -131,21 +119,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     lineHeight: 32,
-    fontWeight: "700"
-  },
-  logoutButton: {
-    minWidth: 56,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: colors.line,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.white
-  },
-  logoutText: {
-    color: colors.muted,
-    fontSize: 13,
     fontWeight: "700"
   },
   subtitle: {
