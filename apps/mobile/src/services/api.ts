@@ -1,8 +1,6 @@
 import { request as commonRequest } from "@sycsq/common";
 import { router } from "expo-router";
 import { env } from "../config/env";
-import { useAuthStore } from "../store/authStore";
-import { useUserStore } from "../store/userStore";
 import { clearRefreshToken, loadRefreshToken, saveRefreshToken } from "../storage/tokenStorage";
 
 export const API_BASE_URL = env.apiBaseUrl;
@@ -31,7 +29,18 @@ type RefreshResult = {
   expiresIn: number;
 };
 
+type AuthSessionAdapter = {
+  getAccessToken: () => string | null;
+  setAccessToken: (accessToken: string | null) => void;
+  clearSessionState: () => void;
+};
+
 let refreshPromise: Promise<string | null> | null = null;
+let authSessionAdapter: AuthSessionAdapter = {
+  getAccessToken: () => null,
+  setAccessToken: () => undefined,
+  clearSessionState: () => undefined
+};
 
 export class ApiError extends Error {
   constructor(
@@ -41,6 +50,10 @@ export class ApiError extends Error {
   ) {
     super(message);
   }
+}
+
+export function configureAuthSessionAdapter(adapter: AuthSessionAdapter) {
+  authSessionAdapter = adapter;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -60,7 +73,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 }
 
 async function performRequest<T>(path: string, options: RequestOptions): Promise<T> {
-  const token = options.auth === false ? null : useAuthStore.getState().accessToken;
+  const token = options.auth === false ? null : authSessionAdapter.getAccessToken();
   const response = await commonRequest<ApiEnvelope<T> | T>(
     {
       url: path,
@@ -118,7 +131,7 @@ async function refreshAccessTokenOnce() {
   try {
     const tokens = await requestRefresh(refreshToken);
     await saveRefreshToken(tokens.refreshToken);
-    useAuthStore.getState().setAccessToken(tokens.accessToken);
+    authSessionAdapter.setAccessToken(tokens.accessToken);
     return tokens.accessToken;
   } catch {
     await clearSession();
@@ -147,8 +160,7 @@ async function requestRefresh(refreshToken: string) {
 
 async function clearSession() {
   await clearRefreshToken();
-  useAuthStore.getState().clearAuth();
-  useUserStore.getState().clearUser();
+  authSessionAdapter.clearSessionState();
   router.replace("/(auth)/login");
 }
 

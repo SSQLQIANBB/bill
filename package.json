@@ -8,7 +8,8 @@
     "mobile": "npm --workspace apps/mobile run start",
     "mobile:android": "npm --workspace apps/mobile run android",
     "mobile:ios": "npm --workspace apps/mobile run ios",
-    "mobile:web": "npm --workspace apps/mobile run web"
+    "mobile:web": "npm --workspace apps/mobile run web",
+    "postinstall": "node scripts/patch-react-navigation-bottom-tabs.js"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { logoutWithRefreshToken } from "../services/auth";
+import { configureAuthSessionAdapter } from "../services/api";
 import { clearRefreshToken, loadRefreshToken } from "../storage/tokenStorage";
 import { useUserStore } from "./userStore";
 
@@ -28,3 +29,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ accessToken: null, isLoggedIn: false });
   }
 }));
+
+configureAuthSessionAdapter({
+  getAccessToken: () => useAuthStore.getState().accessToken,
+  setAccessToken: (accessToken) => useAuthStore.getState().setAccessToken(accessToken),
+  clearSessionState: () => {
+    useAuthStore.getState().clearAuth();
+    useUserStore.getState().clearUser();
+  }
+});
