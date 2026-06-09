@@ -1,0 +1,14 @@
+.git
+.codegraph
+.claude
+node_modules
+apps/mobile/node_modules
+apps/mobile/.expo
+apps/mobile/dist
+services/api/.venv
+services/api/**/__pycache__
+services/api/**/*.pyc
+logs
+*.log
+.DS_Store
+Thumbs.db
