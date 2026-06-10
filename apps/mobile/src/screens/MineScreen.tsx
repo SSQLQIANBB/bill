@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, View } from "react-native";
 import { Screen } from "../components/Screen";
 import { AppText } from "../components/Text";
 import { useAuthStore } from "../store/authStore";
@@ -43,6 +43,7 @@ const supportMenus: MenuItem[] = [
 
 export function MineScreen() {
   const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutConfirmVisible, setLogoutConfirmVisible] = useState(false);
   const user = useUserStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const transactions = useBillStore((state) => state.transactions);
@@ -51,15 +52,25 @@ export function MineScreen() {
   const accountText = user?.phone || user?.email || "已登录";
   const activeDays = new Set(transactions.map((item) => item.occurredAt)).size;
 
-  async function handleLogout() {
+  async function confirmLogout() {
     if (loggingOut) {
       return;
     }
 
     setLoggingOut(true);
-    await logout();
-    router.replace("/(auth)/login");
-    setLoggingOut(false);
+    setLogoutConfirmVisible(false);
+    try {
+      await logout();
+      router.replace("/(auth)/login");
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
+  function handleLogout() {
+    if (!loggingOut) {
+      setLogoutConfirmVisible(true);
+    }
   }
 
   return (
@@ -124,6 +135,27 @@ export function MineScreen() {
       <Pressable style={[styles.logoutButton, loggingOut && styles.disabled]} onPress={handleLogout} disabled={loggingOut}>
         {loggingOut ? <ActivityIndicator color={colors.danger} /> : <AppText style={styles.logoutText}>退出登录</AppText>}
       </Pressable>
+
+      <Modal transparent visible={logoutConfirmVisible} animationType="fade" onRequestClose={() => setLogoutConfirmVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalBackdrop} onPress={() => setLogoutConfirmVisible(false)} />
+          <View style={styles.confirmDialog}>
+            <View style={styles.confirmIcon}>
+              <Ionicons name="log-out-outline" size={24} color={colors.danger} />
+            </View>
+            <AppText style={styles.confirmTitle}>退出登录</AppText>
+            <AppText style={styles.confirmMessage}>确定要退出当前账号吗？</AppText>
+            <View style={styles.confirmActions}>
+              <Pressable style={styles.cancelButton} onPress={() => setLogoutConfirmVisible(false)}>
+                <AppText style={styles.cancelText}>取消</AppText>
+              </Pressable>
+              <Pressable style={[styles.confirmButton, loggingOut && styles.disabled]} onPress={confirmLogout} disabled={loggingOut}>
+                {loggingOut ? <ActivityIndicator color={colors.white} /> : <AppText style={styles.confirmText}>退出登录</AppText>}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   );
 }
@@ -324,5 +356,79 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: 0.6
+  },
+  modalOverlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(15,23,42,0.42)"
+  },
+  confirmDialog: {
+    width: "100%",
+    maxWidth: 360,
+    borderRadius: 18,
+    padding: 22,
+    alignItems: "center",
+    backgroundColor: colors.white
+  },
+  confirmIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fee2e2"
+  },
+  confirmTitle: {
+    marginTop: 14,
+    color: colors.text,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: "700"
+  },
+  confirmMessage: {
+    marginTop: 8,
+    color: colors.muted,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: "center"
+  },
+  confirmActions: {
+    width: "100%",
+    marginTop: 22,
+    flexDirection: "row",
+    gap: 12
+  },
+  cancelButton: {
+    flex: 1,
+    height: 46,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.line,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.white
+  },
+  cancelText: {
+    color: colors.text,
+    fontSize: 15,
+    fontWeight: "700"
+  },
+  confirmButton: {
+    flex: 1,
+    height: 46,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.danger
+  },
+  confirmText: {
+    color: colors.white,
+    fontSize: 15,
+    fontWeight: "700"
   }
 });

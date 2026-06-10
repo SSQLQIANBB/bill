@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { useEffect } from "react";
 import { LoadingScreen } from "../src/components/LoadingScreen";
 import { clearLocalSession, restoreAuthenticatedSession } from "../src/services/session";
@@ -35,5 +35,5 @@ export default function RootLayout() {
     return <LoadingScreen />;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <Slot />;
 }

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, View, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../theme/colors";
 import { AppText } from "./Text";
@@ -49,8 +49,8 @@ export function GlassTabBar({ state, descriptors, navigation }: GlassTabBarProps
 
   return (
     <View style={[styles.safe, { paddingBottom: Math.max(insets.bottom, 10) }]}>
-      <View style={styles.menu}>
-        <View style={styles.gloss} pointerEvents="none" />
+      <View style={[styles.menu, menuShadowStyle]}>
+        <View style={[styles.gloss, styles.noPointerEvents]} />
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
           const options = descriptors[route.key]?.options;
@@ -86,7 +86,12 @@ export function GlassTabBar({ state, descriptors, navigation }: GlassTabBarProps
               accessibilityLabel={options?.tabBarAccessibilityLabel}
               onPress={onPress}
               onLongPress={onLongPress}
-              style={({ pressed }) => [styles.item, isFocused && styles.activeItem, pressed && styles.pressedItem]}
+              style={({ pressed }) => [
+                styles.item,
+                isFocused && styles.activeItem,
+                isFocused && activeItemShadowStyle,
+                pressed && styles.pressedItem
+              ]}
             >
               <Ionicons name={meta.icon} size={22} color={isFocused ? colors.brand : "rgba(255,255,255,0.9)"} />
               <AppText style={[styles.label, isFocused && styles.activeLabel]} numberOfLines={1}>
@@ -109,6 +114,27 @@ function isDefaultPrevented(event: unknown) {
   );
 }
 
+const menuShadowStyle = Platform.select<ViewStyle>({
+  web: { boxShadow: "0 10px 20px rgba(0,0,0,0.08)" } as ViewStyle,
+  default: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 8
+  }
+});
+
+const activeItemShadowStyle = Platform.select<ViewStyle>({
+  web: { boxShadow: "0 1px 8px rgba(255,255,255,0.45)" } as ViewStyle,
+  default: {
+    shadowColor: "#fff",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.45,
+    shadowRadius: 8
+  }
+});
+
 const styles = StyleSheet.create({
   safe: {
     position: "absolute",
@@ -130,12 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,122,255,0.54)",
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    elevation: 8
+    gap: 8
   },
   gloss: {
     ...StyleSheet.absoluteFillObject,
@@ -143,6 +164,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderColor: "rgba(255,255,255,0.42)"
+  },
+  noPointerEvents: {
+    pointerEvents: "none"
   },
   item: {
     flex: 1,
@@ -155,11 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   activeItem: {
-    backgroundColor: "rgba(237,237,237,0.66)",
-    shadowColor: "#fff",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.45,
-    shadowRadius: 8
+    backgroundColor: "rgba(237,237,237,0.66)"
   },
   pressedItem: {
     transform: [{ scale: 0.98 }]

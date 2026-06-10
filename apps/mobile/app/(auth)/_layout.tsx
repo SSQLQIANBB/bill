@@ -1,4 +1,4 @@
-import { Redirect, Stack } from "expo-router";
+import { Redirect, Slot } from "expo-router";
 import { LoadingScreen } from "../../src/components/LoadingScreen";
 import { useAuthStore } from "../../src/store/authStore";
 
@@ -13,5 +13,5 @@ export default function AuthLayout() {
     return <Redirect href="/(tabs)/overview" />;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <Slot />;
 }
